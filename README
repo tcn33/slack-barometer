@@ -2,6 +2,8 @@
 
 A Python and Flask-based web application that tracks your Slack workspace's emoji usage, calculates week-over-week trends, and displays the most popular reactions in a beautiful, Slack-native dashboard.
 
+![An example screenshot](screenshot.png)
+
 ## Prerequisites
 * Python 3.9+
 * A Slack Workspace where you have permission to install Apps
