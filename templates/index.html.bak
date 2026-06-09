@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferocia Emoji Barometer</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f5f7; color: #1d1c1d; margin: 0; padding: 40px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; color: #4a154b; }
+        .date-subtext { color: #616061; font-size: 0.9em; margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e2e2; }
+        th { background-color: #f8f8f8; font-weight: 600; color: #616061; }
+        .emoji-img { width: 32px; height: 32px; vertical-align: middle; }
+        .emoji-text { font-size: 24px; vertical-align: middle; }
+        .trend-up { color: #007a5a; font-weight: bold; }
+        .trend-down { color: #e01e5a; font-weight: bold; }
+        .trend-flat { color: #616061; }
+        .trend-new { color: #1264a3; font-weight: bold; font-size: 0.8em; }
+        .channel-badge { background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; color: #4a154b;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ferocia Emoji Barometer 🌤️</h1>
+        <div class="date-subtext">Week Ending: {{ week_ending }}</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Change</th>
+                    <th>Emoji</th>
+                    <th>Name</th>
+                    <th>Times Used</th>
+                    <th>Top Channel</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emoji in emojis %}
+                <tr>
+                    <td>#{{ emoji.rank }}</td>
+                    <td>
+                        {% if emoji.is_new %}
+                            <span class="trend-new">NEW</span>
+                        {% elif emoji.rank_change > 0 %}
+                            <span class="trend-up">▲ {{ emoji.rank_change }}</span>
+                        {% elif emoji.rank_change < 0 %}
+                            <!-- Absolute value for down trend so it doesn't print "- -3" -->
+                            <span class="trend-down">▼ {{ emoji.rank_change | abs }}</span> 
+                        {% else %}
+                            <span class="trend-flat">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if emoji.custom_path %}
+                            <img src="{{ url_for('static', filename=emoji.custom_path) }}" class="emoji-img" alt="{{ emoji.name }}">
+                        {% else %}
+                            <span class="emoji-text">{{ emoji.display_emoji }}</span>
+                        {% endif %}
+                    </td>
+                    <td>:{{ emoji.name }}:</td>
+                    <td>
+                        <strong>{{ emoji.count }}</strong>
+                        <span style="font-size: 0.8em; color: #616061; margin-left: 5px;">
+                            ({% if emoji.count_diff > 0 %}+{% endif %}{{ emoji.count_diff }})
+                        </span>
+                    </td>
+                    <td><span class="channel-badge">#{{ emoji.top_channel }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+

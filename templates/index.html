@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferocia Emoji Barometer</title>
+    <!-- Add Google Fonts Link for Lato -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Blended original layout with Lato as primary font */
+        body { 
+            font-family: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"; 
+            background-color: #f4f5f7; 
+            color: #1d1c1d; 
+            margin: 0; 
+            padding: 40px; 
+        }
+
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        }
+
+        /* Ferocia Branding Colors */
+        h1 { 
+            margin-top: 0; 
+            color: #4a154b; 
+            font-weight: 900;
+            font-size: 28px;
+        }
+
+        .date-subtext { 
+            color: #616061; 
+            font-size: 0.95em; 
+            margin-bottom: 30px; 
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+        }
+
+        th, td { 
+            padding: 12px 15px; 
+            text-align: left; 
+            border-bottom: 1px solid #e2e2e2; 
+            vertical-align: middle;
+        }
+
+        th { 
+            background-color: #f8f8f8; 
+            font-weight: 600; 
+            color: #616061; 
+            font-size: 13px;
+        }
+
+        tr:hover td { 
+            background-color: #fafafa; 
+        }
+
+        /* Emoji Elements */
+        .emoji-img { width: 28px; height: 28px; vertical-align: middle; }
+        .emoji-text { font-size: 24px; vertical-align: middle; }
+        .emoji-name { font-weight: 700; color: #1d1c1d; }
+
+        /* Slack-style Reaction Pill (Merged with count) */
+        .reaction-pill {
+            display: inline-flex;
+            align-items: center;
+            background-color: #F2F8FD;
+            border: 1px solid #1164A3;
+            color: #1164A3;
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* Slack-style Channel Badge */
+        .channel-badge { 
+            color: #1164A3;
+            font-weight: 700;
+            background: #e8f5fa; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 0.85em; 
+        }
+
+        /* Trend Badges */
+        .trend-up { color: #007a5a; font-weight: bold; }
+        .trend-down { color: #e01e5a; font-weight: bold; }
+        .trend-flat { color: #616061; }
+        .trend-new { 
+            background-color: #1264a3; 
+            color: white;
+            font-weight: bold; 
+            font-size: 0.8em; 
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Ferocia Emoji Barometer 🌤️</h1>
+        <div class="date-subtext">Week Ending: {{ week_ending }}</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Change</th>
+                    <th>Emoji</th>
+                    <th>Name</th>
+                    <th>Times Used</th>
+                    <th>Top Channel</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emoji in emojis %}
+                <tr>
+                    <!-- Rank -->
+                    <td style="color: #616061; font-weight: bold;">#{{ emoji.rank }}</td>
+                    
+                    <!-- Change -->
+                    <td>
+                        {% if emoji.is_new %}
+                            <span class="trend-new">NEW</span>
+                        {% elif emoji.rank_change > 0 %}
+                            <span class="trend-up">▲ {{ emoji.rank_change }}</span>
+                        {% elif emoji.rank_change < 0 %}
+                            <span class="trend-down">▼ {{ emoji.rank_change | abs }}</span> 
+                        {% else %}
+                            <span class="trend-flat">-</span>
+                        {% endif %}
+                    </td>
+                    
+                    <!-- Emoji Graphics -->
+                    <td>
+                        {% if emoji.custom_path %}
+                            <img src="{{ url_for('static', filename=emoji.custom_path) }}" class="emoji-img" alt="{{ emoji.name }}">
+                        {% else %}
+                            <span class="emoji-text">{{ emoji.display_emoji }}</span>
+                        {% endif %}
+                    </td>
+                    
+                    <!-- Code Name -->
+                    <td><span class="emoji-name">:{{ emoji.name }}:</span></td>
+                    
+                    <!-- Slack Reaction Pill -->
+                    <td>
+                        <div class="reaction-pill">
+                            {% if emoji.custom_path %}
+                                <img src="{{ url_for('static', filename=emoji.custom_path) }}" style="width: 14px; height: 14px; margin-right: 4px;">
+                            {% else %}
+                                <span style="margin-right: 4px; font-size: 14px;">{{ emoji.display_emoji }}</span>
+                            {% endif %}
+                            {{ emoji.count }}
+                        </div>
+                        <span style="font-size: 0.85em; color: #616061; margin-left: 5px;">
+                            ({% if emoji.count_diff > 0 %}+{% endif %}{{ emoji.count_diff }})
+                        </span>
+                    </td>
+                    
+                    <!-- Channel Badge -->
+                    <td><span class="channel-badge">#{{ emoji.top_channel }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
+
