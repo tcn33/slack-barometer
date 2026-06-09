@@ -2,6 +2,8 @@
 
 A Python and Flask-based web application that tracks your Slack workspace's emoji usage, calculates week-over-week trends, and displays the most popular reactions in a beautiful, Slack-native dashboard.
 
+Officevibe is how people tell you they feel. Slack reactions tell the **real** story of the office vibe this week.
+
 ![An example screenshot](screenshot.png)
 
 ## Prerequisites
