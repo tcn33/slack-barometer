@@ -1,4 +1,4 @@
-# Ferocia Emoji Barometer 🌤️
+# Ferocia Vibe Barometer 🌤️
 
 A Python and Flask-based web application that tracks your Slack workspace's emoji usage, calculates week-over-week trends, and displays the most popular reactions in a beautiful, Slack-native dashboard.
 
