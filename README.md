@@ -98,6 +98,18 @@ In a production environment, `web.py` should be run continuously as a background
 0 17 * * 5 cd /path/to/app && /usr/bin/python3 app.py
 ```
 
+## Project Risks
+
+This project reads reaction history from **public Slack channels only** and turns that activity into visible trend data. It does not have access to private channels or private messages, unless the bot is invited to that channel/DM. Only emoji reactions are stored.
+
+Key risks to consider before using real workspace data:
+
+* **Privacy and consent:** Employees may not expect emoji reactions to be aggregated or used as a proxy for sentiment. Before installing, you should communicate clearly what is collected, who can view it, and why.
+* **Misinterpretation:** Emoji usage is noisy and context-dependent. They are indicators only, not hard data.
+* **Access scope:** The Slack bot requires broad public-channel read access and is intended to automatically join channels to ensure the data collected is representative of most/all users.
+* **Data exposure:** The SQLite database, downloaded custom emojis, and web dashboard can reveal internal activity patterns. Protect the app, token, database, and hosting environment accordingly.
+* **Operational impact:** Crawling long history windows may hit Slack rate limits (though by default it is set to crawl only the past week), create visible "joined channel" messages, or surprise channel members.
+
 ---
 
 ## Project Structure
